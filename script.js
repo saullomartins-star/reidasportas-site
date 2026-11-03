@@ -1,15 +1,19 @@
-(() => {
-  const config = window.REI_DAS_PORTAS || {};
-  const number = String(config.whatsappNumber || '').replace(/\D/g, '');
-  const button = document.getElementById('whatsapp-button');
-  const status = document.getElementById('contact-status');
-  document.getElementById('year').textContent = new Date().getFullYear();
-
-  if (/^[1-9]\d{9,14}$/.test(number)) {
-    button.href = `https://wa.me/${number}?text=${encodeURIComponent(config.whatsappMessage || 'Olá! Gostaria de saber mais sobre a Rei Das Portas.')}`;
-    button.target = '_blank';
-    button.rel = 'noopener noreferrer';
-    button.removeAttribute('aria-disabled');
-    status.textContent = 'Conte sua ideia. Vamos conversar sobre o seu projeto.';
-  }
+(()=>{
+const config=window.REI_DAS_PORTAS||{},number=String(config.whatsappNumber||'').replace(/\D/g,'');
+if(/^[1-9]\d{9,14}$/.test(number))document.querySelectorAll('.wa').forEach(a=>{a.href=`https://wa.me/${number}?text=${encodeURIComponent(config.whatsappMessage)}`;a.target='_blank';a.rel='noopener noreferrer'});
+document.querySelector('#year').textContent=new Date().getFullYear();
+const menu=document.querySelector('.menu'),nav=document.querySelector('nav');
+function closeMenu(){nav.classList.remove('open');menu.setAttribute('aria-expanded','false');menu.textContent='Menu +'}
+menu.onclick=()=>{const open=menu.getAttribute('aria-expanded')!=='true';nav.classList.toggle('open',open);menu.setAttribute('aria-expanded',open);menu.textContent=open?'Fechar −':'Menu +'};
+nav.addEventListener('click',e=>{if(e.target.closest('a'))closeMenu()});document.addEventListener('keydown',e=>{if(e.key==='Escape')closeMenu()});
+const reduced=matchMedia('(prefers-reduced-motion: reduce)');let observer;
+function motion(){document.documentElement.classList.toggle('motion',!reduced.matches);if(observer)observer.disconnect();if(!reduced.matches){observer=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');observer.unobserve(e.target)}}),{threshold:.12});document.querySelectorAll('.reveal').forEach(el=>observer.observe(el))}}motion();reduced.addEventListener('change',motion);
+const story=document.querySelector('.story'),sticky=document.querySelector('.story-sticky'),first=document.querySelector('.story-first');let queued=false;
+function scrollFrame(){queued=false;if(reduced.matches){first.style.transform='';return}const rect=story.getBoundingClientRect(),progress=Math.min(1,Math.max(0,-rect.top/(story.offsetHeight-sticky.offsetHeight)));story.style.setProperty('--progress',progress);if(rect.bottom>0&&rect.top<innerHeight)first.style.transform=`scale(${1+progress*.09}) translateY(${progress*-2}%)`}
+addEventListener('scroll',()=>{if(!queued){queued=true;requestAnimationFrame(scrollFrame)}},{passive:true});addEventListener('resize',scrollFrame);scrollFrame();
+const cards=[...document.querySelectorAll('.card')];let visible=cards,index=0,lastFocus;
+document.querySelectorAll('[data-filter]').forEach(button=>button.onclick=()=>{document.querySelectorAll('[data-filter]').forEach(b=>b.setAttribute('aria-pressed',String(b===button)));cards.forEach(c=>c.hidden=button.dataset.filter!=='all'&&c.dataset.category!==button.dataset.filter);visible=cards.filter(c=>!c.hidden);document.querySelector('#filter-status').textContent=`${visible.length} referências exibidas`});
+const dialog=document.querySelector('dialog'),image=document.querySelector('#gallery-image');
+function show(i){index=(i+visible.length)%visible.length;const card=visible[index];image.src=card.dataset.image;image.alt=card.querySelector('img').alt;document.querySelector('#gallery-title').textContent=card.dataset.title;document.querySelector('#gallery-count').textContent=`${index+1} / ${visible.length}`}
+cards.forEach(card=>card.onclick=()=>{lastFocus=card;show(visible.indexOf(card));dialog.showModal()});document.querySelector('.close').onclick=()=>dialog.close();dialog.addEventListener('close',()=>lastFocus?.focus());document.querySelector('.prev').onclick=()=>show(index-1);document.querySelector('.next').onclick=()=>show(index+1);dialog.addEventListener('keydown',e=>{if(e.key==='ArrowRight'){e.preventDefault();show(index+1)}if(e.key==='ArrowLeft'){e.preventDefault();show(index-1)}});let startX=0,startY=0;image.addEventListener('touchstart',e=>{startX=e.changedTouches[0].clientX;startY=e.changedTouches[0].clientY},{passive:true});image.addEventListener('touchend',e=>{const dx=e.changedTouches[0].clientX-startX,dy=e.changedTouches[0].clientY-startY;if(Math.abs(dx)>50&&Math.abs(dx)>Math.abs(dy))show(index+(dx<0?1:-1))},{passive:true});
 })();

@@ -1,21 +1,14 @@
-# Rei Das Portas
+# Rei das Portas
+Landing page estática: HTML, CSS e JavaScript nativos, sem dependências de produção.
 
-Landing page responsiva em HTML, CSS e JavaScript, sem dependências ou etapa de build.
+## Executar
+Na pasta do repositório: `python3 -m http.server 8000 --bind 0.0.0.0`.
 
-## Executar localmente
+## Conteúdo
+WhatsApp e mensagem em `config.js`. Imagens conceituais geradas por IA em `assets/`, sem representar catálogo ou trabalhos realizados. As versões WebP de 640 e 1280 pixels são carregadas por `srcset`; substitua ambas ao inserir fotos reais e atualize textos alternativos, categorias e legendas no HTML. Publique a pasta completa, incluindo os assets. Não há fontes, scripts ou imagens carregados de terceiros.
 
-Na pasta do repositório:
+## Interações
+Filtros por categoria, galeria modal com Escape, setas e gesto horizontal; menu móvel; revelação com IntersectionObserver e transição por rolagem com requestAnimationFrame. Movimento reduzido desativa parallax e animações. Conteúdo continua visível sem JavaScript, mas filtros e galeria precisam dele.
 
-```sh
-python3 -m http.server 8000 --bind 0.0.0.0
-```
-
-Abra a porta 8000 no navegador. Para publicar, sirva os arquivos desta pasta em qualquer hospedagem estática.
-
-## Configurar o WhatsApp
-
-Edite `whatsappNumber` em `config.js` com o número real da loja, incluindo código do país e DDD, apenas dígitos. A mensagem inicial também pode ser personalizada nesse arquivo. Sem um número válido, o botão permanece desativado para evitar encaminhar clientes para um contato incorreto.
-
-## Imagem
-
-`assets/portas.png` é uma imagem ilustrativa gerada por IA, sem representar um produto específico da loja. A mesma imagem está incorporada em Base64 no `src` da imagem principal em `index.html`, permitindo que prévias que exibem apenas o HTML também carreguem a foto. O arquivo original é mantido em `assets/portas.png`. Ao substituir a imagem, atualize também esse `src` e o texto alternativo em `index.html`.
+## Segurança
+Versão anterior preservada no commit e455602 e na branch backup/landing-original. Nenhuma publicação efetuada.
